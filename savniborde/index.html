@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Savni Borde — UI/UX Designer</title>
+
+<!-- Montserrat = body. Unbounded + Pinyon Script are only STAND-INS until you add Monument Extended / Sloop Script Pro (see FONTS in CSS) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;800&family=Unbounded:wght@400;500&family=Pinyon+Script&display=swap" rel="stylesheet">
+
+<style>
+/* =====================================================
+   1. SETTINGS — change values here, they apply everywhere
+   ===================================================== */
+:root {
+  /* colours */
+  --bg: #000;
+  --text: #fff;
+  --text-muted: #d9d9d9;       /* project descriptions */
+  --line: rgba(255,255,255,.55);/* table strokes */
+  --red: #9b0d0d;
+
+  /* layout */
+  --pad-header: 80px;          /* logo + header side margins */
+  --pad-page: 100px;           /* every other section's side margins */
+
+  /* type sizes (shrink automatically on smaller screens, max = your spec) */
+  --fs-body: clamp(14px, 1.6vw, 32px);   /* 32px */
+  --fs-sub:  clamp(26px, 3.6vw, 60px);   /* 44px  (Featured Work / My Skillset) */
+  --fs-desc: clamp(14px, 1.3vw, 24px);   /* 24px  (project descriptions) */
+
+  /* FONTS */
+  --font-body: "Montserrat", sans-serif;
+  --font-display: "Monument Extended", "Unbounded", sans-serif;  /* Monument Display Extended Regular */
+  --font-script: "Sloop Script Pro", "Pinyon Script", cursive;   /* Sloop Script Pro */
+
+  /* about section PNG controls */
+  --cover-shadow: 0 0 64px rgba(0,0,0,1);   /* black drop shadow, even all around */
+  --vinyl-speed: 5s;                               /* time for one full rotation */
+}
+
+/* To use your own fonts, upload files and uncomment:
+@font-face { font-family: "Monument Extended"; src: url("fonts/MonumentExtended-Regular.woff2") format("woff2"); } */
+@font-face { font-family: "Sloop Script Pro";  src: url("fonts/SloopScriptPro.woff2") format("woff2"); }
+
+
+@media (max-width: 1024px) { :root { --pad-header: 40px; --pad-page: 40px; } }
+@media (max-width: 640px)  { :root { --pad-header: 16px; --pad-page: 20px; } }
+
+/* =====================================================
+   2. BASE
+   ===================================================== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--text); font: 400 var(--fs-body)/1.35 var(--font-body); overflow-x: hidden; }
+img { max-width: 100%; display: block; }
+a { color: inherit; text-decoration: none; }
+a:focus-visible, button:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+section, footer { position: relative; }
+
+/* Display headings: wide font + script first letter.
+   If you use SVGs instead, replace the heading's content with <img src="..." alt="Featured Work"> */
+.display { font-family: var(--font-display); text-transform: uppercase; font-weight: 400; line-height: 1.05; }
+.script { font-family: var(--font-script); text-transform: none; font-size: 1.35em; line-height: 0; }
+.sub { font-size: var(--fs-sub); }
+
+/* =====================================================
+   3. FLOATING HEADER (fixed, active link follows scroll)
+   ===================================================== */
+.logo { position: absolute; top: 42px; left: var(--pad-header); z-index: 5; width: 112px; height: 64px;
+  display: grid; place-items: center; font: 400 40px var(--font-script); }
+.logo img { width: 100%; }  /* drop your logo svg inside .logo */
+
+.site-header { position: fixed; top: 48px; left: calc(var(--pad-header) + 21vw); right: var(--pad-header); z-index: 20;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  padding: 9px 14px 9px 40px; border: 1px solid rgba(255,255,255); border-radius: 100px;
+  background: rgba(0,0,0,.55); backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(14px); }
+.site-header nav { display: flex; gap: clamp(16px, 9.8vw, 80px); margin: 0 auto 0 3.5vw; }
+.site-header nav a { font-size: 18px; font-weight:400; letter-spacing: .05em; text-transform: uppercase; opacity: .8; transition: opacity .2s; }
+.site-header nav a:hover, .site-header nav a.active { opacity: 1; font-weight: 800; }
+.btn-resume { font-size: 18px; letter-spacing: .05em; text-transform: uppercase; padding: 10px 18px;
+  border: 1px solid rgba(255,255,255,.08); border-radius: 100px; background: rgba(255,255,255,.04); }
+
+@media (max-width: 1200px) {
+  .site-header { padding: 8px 10px 8px 14px; border-radius: 100px; }
+  .site-header nav { gap: 32px; margin: 1vw; }
+  .site-header nav a, .btn-resume { font-size: 15px; }
+  .btn-resume { padding: 6px 10px; }
+}
+
+@media (max-width: 800px) {
+  .site-header { left: var(--pad-header); padding: 8px 10px 8px 14px; border-radius: 100px; min-height: 48px; }
+  .site-header nav { gap: 12px; margin: 0; }
+  .site-header nav a, .btn-resume { font-size: 11px; }
+  .btn-resume { padding: 6px 10px; }
+  .logo { top: 86px;padding-top: 18px; }
+}
+
+@media (max-width: 460px) { 
+  .site-header { left: var(--pad-header); padding: 8px 14px; border-radius: 100px; justify-content: center; }
+  .site-header nav { gap: 12px; margin: 0 auto; }
+  .site-header nav a { font-size: 11px; }
+  .btn-resume { display: none; }
+  .logo { top: 86px; padding-top: 18px; }
+}
+
+/* =====================================================
+   4. HERO  
+   ===================================================== */
+.hero { min-height: 132svh; padding: 44.73svh var(--pad-page) 0; display: flex; align-items: flex-start; overflow: hidden;
+  background: radial-gradient(ellipse at 10% 40%, var(--red) 0%, transparent 55%), var(--bg);
+  /* ▼ HERO BACKGROUND IMAGE — replace with your file */
+  background-image: url("images/hero-bg.png"); background-size: cover; background-position: center; }
+.hero-title { position: relative; z-index: 3; font-size: clamp(34px, 5.75vw, 100px); letter-spacing: 0.04em; margin-left:-1vw ;}
+.hero-title span.line2 { display: block; margin-top: 0.2em; }
+.hero .script   { padding-right: 0.10em; }   /* UI/UX Designer */
+@media (max-width: 460px) { .hero { min-height: 100svh; margin-bottom: -50px} }
+
+.hero-ghost { position: absolute; left: 0; right: 0; bottom: 6%; z-index: 1; text-align: center; white-space: nowrap;
+  font: 400 clamp(60px, 15vw, 220px)/1 var(--font-display); text-transform: uppercase; color: rgba(255,255,255,.12); pointer-events: none; }
+
+/* ▼ HERO IMAGE (microphone) */
+.hero-img { position: absolute; z-index: 2; right: 12%; top: 0; height: 85%; width: auto; max-width: 45%; object-fit: contain; object-position: top; }
+.hero-img-slot { position: absolute; z-index: 2; right: 12%; top: 0; width: 30%; height: 85%; }
+
+
+
+/* =====================================================
+   5. FEATURED WORK
+   ===================================================== */
+.work { padding: 120px var(--pad-page); }
+.work h2 { margin-bottom: 40px; }
+.cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(12px, 1.4vw, 20px); }
+.card { display: block; }
+.card-thumb { aspect-ratio: 5 / 4; background: #1a1a1a; border-radius: 1px; overflow: hidden; margin-bottom: 18px; }
+.card-thumb img { width: 100%; height: 100%; object-fit: cover; transition: transform .4s; }
+.card:hover .card-thumb img { transform: scale(1.04); }
+.card h3 { font: 450 var(--fs-body)/1.2 var(--font-body); text-transform: uppercase; letter-spacing: 0.05em; padding-top: 20px;}
+.card p { font-size: var(--fs-desc); color: var(--text-muted); margin-top: 2px; font-weight: 200; letter-spacing: 0.02em;}
+@media (max-width: 760px) { .cards { grid-template-columns: 1fr; gap: 36px; } }
+.work .script   { padding-right: 0.275em; }   /* Featured Work */
+
+/* =====================================================
+   6. SKILLSET  (1px strokes, 2-column tables)
+   ===================================================== */
+.skills { padding: 80px var(--pad-page) 140px; }
+.skills h2 { margin-bottom: 72px; }
+.skills h3 { font: 200 var(--fs-body)/1 var(--font-body); letter-spacing: .3em; text-transform: uppercase; margin: 60px 0 20px; color: #d9d9d9; }
+.skills h2 + h3 { margin-top: 0; }
+.table { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--line); border: 1px solid var(--line); margin-bottom: 5vw; }
+.table li { list-style: none; background: var(--bg); padding: clamp(10px, 1.2vw, 20px) clamp(14px, 2.5vw, 60px);
+  display: flex; align-items: center; gap: 16px; font-weight: 300;}
+.table .icon { flex: 0 0 auto; width: 1.35em; height: 1.35em; font-size: var(--fs-body); margin-right: 0.6vw;}  /* icon slot */
+.table .icon img { width: 100%; height: 100%; object-fit: contain; }
+@media (max-width: 640px) { .table { grid-template-columns: 1fr; } .skills h3 { letter-spacing: .15em; } }
+.skills .script { padding-right: 0.4em; }   /* My Skillset */
+
+/* =====================================================
+   7. ABOUT
+   ===================================================== */
+.about { padding: 60px var(--pad-page) 140px; display: grid; grid-template-columns: 1.25fr 1fr; align-items: center; gap: clamp(20px, 4vw, 60px); }
+.about-visual { position: relative; display: flex; align-items: center; }
+.about-cover { position: relative; z-index: 2; width: 75%; filter: drop-shadow(var(--cover-shadow)); }   /* cover png */
+.about-vinyl { position: absolute; z-index: 1; right: -75px; top: 50%; width: 65%; margin-top: -33%;
+  animation: spin var(--vinyl-speed) linear infinite; transform-origin: 50% 50%; }                     /* rotating png */
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .about-vinyl { animation: none; } html { scroll-behavior: auto; } }
+.about h2 { margin-bottom: 24px; font-size: var(--fs-sub); line-height: 4.5vw; }
+@media (max-width: 860px) { .about h2 { line-height: 32px; } }
+.about p {  line-height: 1.6;font-weight: 300; }
+@media (max-width: 860px) { .about { grid-template-columns: 1fr; } }
+.about-text { margin-left: -6vw; position: relative; z-index: 3; }
+@media (max-width: 860px) { .about-text { margin-left: 0 } }
+.about .script  { padding-right: 0.2em; }   /* Hi, I'm Savni Borde */
+.about .script-b { padding-right: 0.11em; }  /* Hi, I'm Savni Borde */
+
+/* =====================================================
+   8. CONTACT / FOOTER  (background edge to edge)
+   ===================================================== */
+.footer { padding: 120px var(--pad-page) 0; margin-top: 54px;overflow: visible; min-height: clamp(520px, 43vw, 900px);
+  /* background: radial-gradient(ellipse at 80% 100%, var(--red) 0%, transparent 60%), var(--bg); */
+  /* ▼ FOOTER BACKGROUND IMAGE */
+background-image: url("images/footer BG.png"); background-size: cover; background-position: center; }
+.footer-grid { position: relative; z-index: 2; display: flex; justify-content: space-between; gap: 40px; flex-wrap: wrap; padding-top: 53px;}
+.pill { display: flex; align-items: center; gap: 14px; width: clamp(240px, 32.5vw, 540px); max-width: 100%; margin-top: 44px;
+  padding: 8px 20px; border: 1px solid rgba(255,255,255,1);background-color: #000  ;border-radius: 999px; 
+  font-weight: 300; letter-spacing:0.02em; word-break: break-all; }
+  .pill + .pill { margin-top: 12px; } 
+.pill-icon { flex: 0 0 auto; width: 1.2em; height: 1.2em; object-fit: contain; margin-right: 0.6vw;}
+@media (max-width: 460px) { .pill {font-size: 12px; } }
+
+.elsewhere { position: relative; left: -11vw; top: 10px; }
+@media (max-width: 860px) { .elsewhere { margin-left: 0 } }
+@media (max-width: 460px) { .elsewhere h4 {font-size: 12px; } }
+@media (max-width: 460px) { .elsewhere a {font-size: 12px; } }
+.elsewhere h4 { font: (--font-body); font-weight:400; letter-spacing: .02em; margin: 6px 0 36px; }
+.elsewhere a { display: flex; align-items: center; gap: 8px; width: fit-content; margin-bottom: 20px;font-weight: 300; letter-spacing: 0.032em;}
+.footer-icon { flex: 0 0 auto; width: 1.5em; height: 1.5em; object-fit: contain;}
+.footer-star { position: absolute; z-index: 3; right: 1%; top: -100px; width: clamp(75px, 17.5vw, 300px); }  /* GIF */
+@media (max-width:460px) { .footer-star {top: 0px; } }
+.footer .script { padding-right: 0.24em; }   /* Contact Me */
+@media (max-width: 860px) {
+  .footer-grid { flex-direction: column; align-items: flex-start; gap: 32px; }
+  .pill { width: 100%; }
+  .elsewhere { left: 0; top: 0; }
+}
+
+.footer-ghost { text-align: center; white-space: nowrap; margin-top: 60px; transform: translateY(18%);
+  font: 400 clamp(50px, 14vw, 200px)/1 var(--font-display); text-transform: uppercase; color: rgba(255,255,255,.12); pointer-events: none; }
+</style>
+</head>
+
+<body>
+
+<!-- ============ LOGO (scrolls away with the page) ============ -->
+<a class="logo" href="#home" aria-label="Home">
+  <img src="images/logo.png" alt="S">
+</a>
+
+<!-- ============ FLOATING HEADER (stays fixed) ============ -->
+<header class="site-header">
+  <nav aria-label="Main">
+    <a href="#home" class="active">Home</a>
+    <a href="#work">Work</a>
+    <a href="#about">About</a>
+    <a href="#contact">Contact</a>
+  </nav>
+  <!-- ▼ RESUME LINK -->
+  <a class="btn-resume" href="https://drive.google.com/file/d/1gQ_0wXyQ-VAs1EknFZDc1XmOPKer5erq/view?usp=sharing" target="_blank" rel="noopener">Resume</a>
+</header>
+
+<main>
+
+<!-- ============ HERO ============ -->
+<section class="hero" id="home">
+  <!-- ▼ TITLE: swap the text for an SVG if needed: <img src="images/ui-ux-designer.svg" alt="UI/UX Designer"> -->
+  <h1 class="display hero-title">
+    UI/UX
+    <span class="line2"><span class="script">D</span>ESIGNER</span>
+  </h1>
+
+  <!-- ▼ HERO IMAGE (microphone png) -->
+  <img class="hero-img" src="" alt="" hidden>
+  <!-- remove "hidden" once you add a src -->
+
+  <!-- <div class="hero-ghost" aria-hidden="true">SAVNIBORDE</div> -->
+</section>
+
+<!-- ============ FEATURED WORK ============ -->
+<section class="work" id="work">
+  <!-- ▼ HEADING: swap for SVG if needed -->
+  <h2 class="display sub">Featured <span class="script">W</span>ork</h2>
+
+  <div class="cards">
+    <!-- ▼ PROJECT 1 — change href (Behance link), image src, title, description -->
+    <a class="card" href="https://www.behance.net/gallery/256102951/Pulseira-Interaction-Design-in-Fitness?platform=direct" target="_blank" rel="noopener">
+      <div class="card-thumb"><img src="images/pulseira.png" alt="Pulseira project cover"></div>
+      <h3>Pulseira</h3>
+      <p>Interaction Design in Fitness</p>
+    </a>
+
+    <!-- ▼ PROJECT 2 -->
+    <a class="card" href="https://www.behance.net/gallery/231955737/Ishaara-Design-For-Special-Needs" target="_blank" rel="noopener">
+      <div class="card-thumb"><img src="images/ishaara.png" alt="Ishaara project cover"></div>
+      <h3>Ishaara</h3>
+      <p>Inclusive UX Design using AR</p>
+    </a>
+
+    <!-- ▼ PROJECT 3 -->
+    <a class="card" href="https://www.behance.net/gallery/252540483/Redesigning-MakeMyTrip-Through-Cognitive-Ergonomics" target="_blank" rel="noopener">
+      <div class="card-thumb"><img src="images/mmt.png" alt="Make My Trip project cover"></div>
+      <h3>Make My Trip</h3>
+      <p>UX Redesign Project</p>
+    </a>
+    
+  </div>
+</section>
+
+<!-- ============ SKILLSET ============ -->
+<section class="skills" id="skills">
+  <h2 class="display sub">My <span class="script">S</span>killset</h2>
+
+  <h3>Design Skills</h3>
+  <ul class="table">
+    <li>UX Design</li><li>Web Design</li>
+    <li>UI Design</li><li>Usability Testing</li>
+    <li>Interaction Design</li><li>Design Systems</li>
+    <li>Wireframing &amp; Prototyping</li><li>Visual Communication</li>
+    <li>Information Architecture</li><li>Branding &amp; Visual Identity</li>
+    <li>UX Research</li><li>AI-assisted Design</li>
+  </ul>
+
+  <!-- Icon slots: put <img src="icons/figma.svg" alt=""> inside each <span class="icon"> -->
+  <h3>Design Tools</h3>
+  <ul class="table">
+    <li><span class="icon"><img src="icons/figma.png" alt=""></span>Figma</li><li><span class="icon"><img src="icons/After Effects.png" alt=""></span>Adobe After Effects</li>
+    <li><span class="icon"><img src="icons/Adobe Photoshop.png" alt=""></span>Adobe Photoshop</li><li><span class="icon"><img src="icons/Framer.png" alt=""></span>Framer</li>
+    <li><span class="icon"><img src="icons/Adobe Illustrator.png" alt=""></span>Adobe Illustrator</li><li><span class="icon"><img src="icons/Procreate.png" alt=""></span>Procreate</li>
+  </ul>
+
+  <h3>AI Tools</h3>
+  <ul class="table">
+    <li><span class="icon"><img src="icons/Claude.png" alt=""></span>Claude &amp; Claude Code</li><li><span class="icon"><img src="icons/ChatGPT.png" alt=""></span>ChatGPT</li>
+    <li><span class="icon"><img src="icons/Gemini.png" alt=""></span>Google Gemini &amp; Nano Banana Pro</li><li><span class="icon"><img src="icons/Perplexity.png" alt=""></span>Perplexity</li>
+    <li><span class="icon"><img src="icons/Vizcom.png" alt=""></span>Vizcom</li><li><span class="icon"><img src="icons/Midjourney.png" alt=""></span>Midjourney</li>
+  </ul>
+
+  <h3>Development</h3>
+  <ul class="table">
+    <li><span class="icon"><img src="icons/HTML.png" alt=""></span>HTML (Basic)</li><li><span class="icon"><img src="icons/CSS.png" alt=""></span>CSS (Basic)</li>
+  </ul>
+
+  <h3>Soft Skills</h3>
+  <ul class="table">
+    <li>Cross-functional Collaboration</li><li>Creative Thinking</li>
+    <li>Problem-solving</li><li>Attention to Detail</li>
+    <li>Communication</li><li>User Empathy</li>
+    <li>Adaptability</li><li>Ownership &amp; Initiative</li>
+  </ul>
+</section>
+
+<!-- ============ ABOUT ============ -->
+<section class="about" id="about">
+  <div class="about-visual">
+    <!-- ▼ COVER PNG (drop shadow set in --cover-shadow) -->
+    <img class="about-cover" src="images/vinyl cover.png" alt="">
+    <!-- ▼ ROTATING PNG (speed set in --vinyl-speed) -->
+    <img class="about-vinyl" src="images/vinyl record.png" alt="" aria-hidden="true">
+  </div>
+
+  <div class="about-text">
+    <!-- ▼ HEADING: swap for SVG if needed -->
+    <h2 class="display">Hi, I’m <br><span class="script">S</span>avni <span class="script script-b">B</span>orde</h2>
+    <p>A UX/UI designer who enjoys shaping ideas into thoughtful, human-centered experiences.
+       My work is driven by research, interaction, storytelling and visual clarity, turning layered
+       problems into designs that feel meaningful, usable and intentional.</p>
+  </div>
+</section>
+
+</main>
+
+<!-- ============ CONTACT / FOOTER ============ -->
+<footer class="footer" id="contact">
+  <!-- ▼ STAR GIF -->
+  <img class="footer-star" src="images/star.gif" alt="" aria-hidden="true">
+
+  <div class="footer-grid">
+    <div>
+      <h2 class="display sub"><span class="script">C</span>ontact Me</h2>
+      <!-- ▼ EMAIL + PHONE -->
+      <a class="pill" href="mailto:savniborde@gmail.com">
+        <img class="pill-icon" src="icons/mail.svg" alt=""> 
+        savniborde@gmail.com
+      </a>
+      <a class="pill" href="tel:+919881428370">
+        <img class="pill-icon" src="icons/call.svg" alt=""> 
+        +91 98814 28370
+      </a>
+    </div>
+
+    <div class="elsewhere">
+      <h4>ELSEWHERE</h4>
+      <!-- ▼ ADD YOUR LINKS -->
+      <a href="https://www.linkedin.com/in/savniborde" target="_blank" rel="noopener">LinkedIn <img class="footer-icon" src="icons/arrow-up-right.svg" alt=""></a>
+      <a href="https://www.behance.net/savniborde" target="_blank" rel="noopener">Behance <img class="footer-icon" src="icons/arrow-up-right.svg" alt=""></a>
+      <a href="https://drive.google.com/file/d/1gQ_0wXyQ-VAs1EknFZDc1XmOPKer5erq/view?usp=sharing" target="_blank" rel="noopener">Resume <img class="footer-icon" src="icons/arrow-up-right.svg" alt=""></a>
+    </div>
+  </div>
+
+  <!-- <div class="footer-ghost" aria-hidden="true">Let’s Talk</div> -->
+</footer>
+
+<script>
+/* Header highlight follows the section you're in; clicking a link scrolls smoothly (CSS). */
+const links = document.querySelectorAll('.site-header nav a');
+const map = { home: 'home', work: 'work', skills: 'work', about: 'about', contact: 'contact' };
+const setActive = id => links.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + map[id]));
+
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) setActive(e.target.id); });
+}, { rootMargin: '-45% 0px -50% 0px' });
+
+document.querySelectorAll('#home, #work, #skills, #about, #contact').forEach(s => io.observe(s));
+</script>
+</body>
+</html>
